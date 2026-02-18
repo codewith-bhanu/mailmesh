@@ -32,7 +32,7 @@ export const createProviderSchema = z.object({
   name: z.string().min(1).max(255),
   type: z.enum(providerTypes),
   credentials: z.union([apiCredentials, sesCredentials, smtpCredentials]),
-  from_email: z.string().email().optional(),
+  from_email: z.email().optional(),
   from_name: z.string().max(255).optional(),
   priority: z.number().int().min(0).default(0),
   daily_limit: z.number().int().positive().optional(),
@@ -43,7 +43,7 @@ export const updateProviderSchema = z.object({
   credentials: z
     .union([apiCredentials, sesCredentials, smtpCredentials])
     .optional(),
-  from_email: z.string().email().optional(),
+  from_email: z.email().optional(),
   from_name: z.string().max(255).optional(),
   priority: z.number().int().min(0).optional(),
   daily_limit: z.number().int().positive().nullable().optional(),

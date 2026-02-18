@@ -12,7 +12,7 @@ const eventTypes = [
 ] as const;
 
 export const createWebhookSchema = z.object({
-  url: z.string().url("Invalid webhook URL"),
+  url: z.url("Invalid webhook URL"),
   description: z.string().max(500).optional(),
   events: z
     .array(z.enum(eventTypes))
@@ -20,7 +20,7 @@ export const createWebhookSchema = z.object({
 });
 
 export const updateWebhookSchema = z.object({
-  url: z.string().url().optional(),
+  url: z.url().optional(),
   description: z.string().max(500).optional(),
   events: z.array(z.enum(eventTypes)).optional(),
   is_active: z.boolean().optional(),
