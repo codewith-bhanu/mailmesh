@@ -22,14 +22,14 @@ declare module "hono" {
  */
 export async function apiKeyAuth(c: Context, next: Next) {
   const authHeader = c.req.header("Authorization");
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!authHeader) {
     throw AppError.unauthorized("Missing or invalid Authorization header");
   }
 
   const rawKey = authHeader.slice(7); // Remove "Bearer "
-  if (!rawKey.startsWith("mm_live_")) {
-    throw AppError.unauthorized("Invalid API key format");
-  }
+  //   if (!rawKey.startsWith("mm_live_")) {
+  //     throw AppError.unauthorized("Invalid API key format");
+  //   }
 
   const keyHash = hashSHA256(rawKey);
 
@@ -44,6 +44,8 @@ export async function apiKeyAuth(c: Context, next: Next) {
       ),
     )
     .limit(1);
+
+  console.log("Key", key);
 
   if (!key) {
     throw AppError.unauthorized("Invalid or revoked API key");

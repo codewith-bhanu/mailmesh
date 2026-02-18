@@ -60,6 +60,8 @@ api.route("/email", emailRoutes);
 api.route("/webhooks", webhooksRoutes);
 api.route("/analytics", analyticsRoutes);
 
+app.route("", api);
+
 // ─── Error Handler ────────────────────────────────────────
 app.onError(errorHandler);
 
