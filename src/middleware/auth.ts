@@ -27,9 +27,6 @@ export async function apiKeyAuth(c: Context, next: Next) {
   }
 
   const rawKey = authHeader.slice(7); // Remove "Bearer "
-  //   if (!rawKey.startsWith("mm_live_")) {
-  //     throw AppError.unauthorized("Invalid API key format");
-  //   }
 
   const keyHash = hashSHA256(rawKey);
 
@@ -44,8 +41,6 @@ export async function apiKeyAuth(c: Context, next: Next) {
       ),
     )
     .limit(1);
-
-  console.log("Key", key);
 
   if (!key) {
     throw AppError.unauthorized("Invalid or revoked API key");
@@ -69,15 +64,6 @@ export async function apiKeyAuth(c: Context, next: Next) {
   await next();
 }
 
-/**
- * JWT authentication middleware for dashboard routes.
- * Uses Hono's built-in hono/jwt with Web Crypto API.
- */
-export const jwtAuth = jwt({
-  secret: env.JWT_SECRET,
-  alg: "HS256",
-});
-
 export async function decodeJwtPayload(c: Context, next: Next) {
   const authToken = c.req.header("Authorization");
   console.log("🚀 ~ decodeJwtPayload ~ authToken:", authToken);
@@ -94,10 +80,6 @@ export async function decodeJwtPayload(c: Context, next: Next) {
   next();
 }
 
-/**
- * Post-JWT middleware to extract userId and workspaceId from the verified payload.
- * Use after jwtAuth: dashboard.use("*", jwtAuth, extractJwtPayload);
- */
 export async function extractJwtPayload(c: Context, next: Next) {
   const payload = c.get("jwtPayload") as {
     userId: string;
