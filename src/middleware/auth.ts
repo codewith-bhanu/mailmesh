@@ -1,5 +1,5 @@
 import type { Context, Next } from "hono";
-import { jwt } from "hono/jwt";
+import { decode, jwt } from "hono/jwt";
 import { db } from "../db/db-client";
 import { apiKeys } from "../db/schema";
 import { hashSHA256 } from "../lib/crypto";
@@ -21,7 +21,7 @@ declare module "hono" {
  * Expects: Authorization: Bearer mm_live_xxxxx
  */
 export async function apiKeyAuth(c: Context, next: Next) {
-  const authHeader = c.req.header("Authorization");
+  const authHeader = c.req.header("x-api-key");
   if (!authHeader) {
     throw AppError.unauthorized("Missing or invalid Authorization header");
   }
@@ -77,6 +77,22 @@ export const jwtAuth = jwt({
   secret: env.JWT_SECRET,
   alg: "HS256",
 });
+
+export async function decodeJwtPayload(c: Context, next: Next) {
+  const authToken = c.req.header("Authorization");
+  console.log("🚀 ~ decodeJwtPayload ~ authToken:", authToken);
+
+  if (!authToken) {
+    throw AppError.unauthorized("Token is invalid");
+  }
+
+  const jwtPayload = decode(authToken);
+  console.log("🚀 ~ decodeJwtPayload ~ jwtPayload:", jwtPayload);
+
+  c.set("jwtPayload", jwtPayload);
+
+  next();
+}
 
 /**
  * Post-JWT middleware to extract userId and workspaceId from the verified payload.
